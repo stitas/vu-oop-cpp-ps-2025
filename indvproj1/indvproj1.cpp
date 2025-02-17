@@ -106,7 +106,12 @@ int main(){
 
     // Test destructor
     delete invoices[0];
-
     assert(Invoice::count == 2);
+
+    delete invoices[1];
+    assert(Invoice::count == 1);
+
+    delete invoices[2];
+    assert(Invoice::count == 0);
 
 }
