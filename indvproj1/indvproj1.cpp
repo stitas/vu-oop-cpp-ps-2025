@@ -17,13 +17,15 @@ private:
 
 public:
     static int count;
+    static int s_id;
 
     Invoice(string customerName, int amount, bool paid) {
         this->customerName = customerName;
         this->amount = amount;
         this->paid = paid;
-        this->id = count;
+        this->id = s_id;
         count++;
+        s_id++;
     }
 
     // New invoice (unpaid)
@@ -31,8 +33,9 @@ public:
         this->customerName = customerName;
         this->amount = amount;
         this->paid = false;
-        this->id = count;
+        this->id = s_id;
         count++;
+        s_id++;
     }
 
     ~Invoice() {
@@ -80,6 +83,7 @@ public:
 };
 
 int Invoice::count = 0;
+int Invoice::s_id = 0;
 
 int main(){
     Invoice* invoices[3];
