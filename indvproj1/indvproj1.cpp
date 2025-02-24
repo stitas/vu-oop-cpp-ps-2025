@@ -1,5 +1,6 @@
-// indvproj1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
+// Titas Stongvila
+// 1 individualus darbas OOP CPP
+// Invoice klase
 
 #include <iostream>
 #include <sstream>
