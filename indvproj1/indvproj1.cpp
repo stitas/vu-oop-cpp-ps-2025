@@ -12,6 +12,7 @@ private:
     string customerName;
     int amount;
     bool paid;
+    int id;
 
 public:
     static int count;
@@ -20,6 +21,7 @@ public:
         this->customerName = customerName;
         this->amount = amount;
         this->paid = paid;
+        this->id = count;
         count++;
     }
 
@@ -28,6 +30,7 @@ public:
         this->customerName = customerName;
         this->amount = amount;
         this->paid = false;
+        this->id = count;
         count++;
     }
 
@@ -69,6 +72,10 @@ public:
     bool isPaid() {
         return this->paid;
     }
+
+    int getId() {
+        return this->id;
+    }
 };
 
 int Invoice::count = 0;
@@ -76,6 +83,9 @@ int Invoice::count = 0;
 int main(){
     Invoice* invoices[3];
     invoices[0] = new Invoice("Titas", 100, false);
+
+    assert(invoices[0]->getId() == 0);
+
     invoices[1] = new Invoice("Dovydas", 500);
     invoices[2] = new Invoice("Emile", 4000, true);
 
