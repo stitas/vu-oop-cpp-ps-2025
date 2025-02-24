@@ -15,36 +15,52 @@ private:
     bool paid;
     int id;
 
-public:
-    static int count;
-    static int s_id;
+    static int staticCount;
+    static int staticId;
 
+    void setId(int id) {
+        this->id = id;
+    }
+
+    static void incStaticId() {
+        staticId++;
+    }
+
+    static void incCount() {
+        staticCount++;
+    }
+
+    static void decCount() {
+        staticCount--;
+    }
+
+public:
     Invoice(string customerName, int amount, bool paid) {
-        this->customerName = customerName;
-        this->amount = amount;
-        this->paid = paid;
-        this->id = s_id;
-        count++;
-        s_id++;
+        setCustomerName(customerName);
+        setAmount(amount);
+        setPaid(paid);
+        setId(staticId);
+        incStaticId();
+        incCount();
     }
 
     // New invoice (unpaid)
     Invoice(string customerName, int amount) {
-        this->customerName = customerName;
-        this->amount = amount;
-        this->paid = false;
-        this->id = s_id;
-        count++;
-        s_id++;
+        setCustomerName(customerName);
+        setAmount(amount);
+        setPaid(paid);
+        setId(staticId);
+        incStaticId();
+        incCount();
     }
 
     ~Invoice() {
-        count--;
+        decCount();
     }
 
     string toString() {
         stringstream ss;
-        ss << "Name: " << this->customerName << endl << "Amount: " << this->amount << endl << "Is paid: " << (this->paid ? "True" : "False") << endl;
+        ss << getCustomerName() << " " << getAmount() << " " << isPaid() << endl;
 
         return ss.str();
     }
@@ -80,10 +96,14 @@ public:
     int getId() {
         return this->id;
     }
+
+    static int getCount() {
+        return staticCount;
+    }
 };
 
-int Invoice::count = 0;
-int Invoice::s_id = 0;
+int Invoice::staticCount = 0;
+int Invoice::staticId = 0;
 
 int main(){
     Invoice* invoices[3];
@@ -95,14 +115,14 @@ int main(){
     invoices[2] = new Invoice("Emile", 4000, true);
 
     // Test objCount
-    assert(Invoice::count == 3);
+    assert(Invoice::getCount() == 3);
 
     // Test getters
     assert(invoices[0]->getCustomerName() == "Titas");
     assert(invoices[0]->getAmount() == 100);
     assert(invoices[0]->isPaid() == false);
 
-    string invoiceString = "Name: Titas\nAmount: 100\nIs paid: False\n";
+    string invoiceString = "Titas 100 0\n";
 
     assert(invoices[0]->toString() == invoiceString);
 
@@ -121,12 +141,11 @@ int main(){
 
     // Test destructor
     delete invoices[0];
-    assert(Invoice::count == 2);
+    assert(Invoice::getCount() == 2);
 
     delete invoices[1];
-    assert(Invoice::count == 1);
+    assert(Invoice::getCount() == 1);
 
     delete invoices[2];
-    assert(Invoice::count == 0);
-
+    assert(Invoice::getCount() == 0);
 }
