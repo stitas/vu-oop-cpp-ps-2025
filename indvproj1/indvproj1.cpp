@@ -144,4 +144,6 @@ int main(){
 
     delete invoices[2];
     assert(invoice::getCount() == 0);
+	
+	return 0;
 }
