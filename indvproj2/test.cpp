@@ -139,22 +139,77 @@ int main() {
 	// Test 1
 	bmh2->remove(0);
 	std::cout << "bmh2->remove(0);\n";
-	std::cout << "EXPECTED: 4 6\n";
+	std::cout << "EXPECTED: 1 4 6\n";
 	std::cout << "RESULT: ";
 	std::cout << bmh2->toString() << "\n";
-	assert(strcmp(bmh2->toString().c_str(), "4 6") == 0);
+	assert(strcmp(bmh2->toString().c_str(), "1 4 6") == 0);
 	std::cout << "PASSED!\n\n";
 
-	// Test update
-	std::cout << "TEST UPDATE ELEMENT\n\n";
+	// Test 2
+	bmh2->remove(4);
+	std::cout << "bmh2->remove(4);\n";
+	std::cout << "EXPECTED: 1 6\n";
+	std::cout << "RESULT: ";
+	std::cout << bmh2->toString() << "\n";
+	assert(strcmp(bmh2->toString().c_str(), "1 6") == 0);
+	std::cout << "PASSED!\n\n";
+
+	// Test 3
+	bmh2->insert(4);
+	bmh2->insert(4);
+	bmh2->insert(4);
+	std::cout << "bmh2->insert(4);\n";
+	std::cout << "bmh2->insert(4);\n";
+	std::cout << "bmh2->insert(4);\n";
+	std::cout << "EXPECTED: 1 4 4 6 4\n";
+	std::cout << "RESULT: ";
+	std::cout << bmh2->toString() << "\n";
+	assert(strcmp(bmh2->toString().c_str(), "1 4 4 6 4") == 0);
+	std::cout << "PASSED!\n\n";
+
+
+	bmh2->removeAll(4);
+	std::cout << "bmh2->removeAll(4);\n";
+	std::cout << "EXPECTED: 1 6\n";
+	std::cout << "RESULT: ";
+	std::cout << bmh2->toString() << "\n";
+	assert(strcmp(bmh2->toString().c_str(), "1 6") == 0);
+	std::cout << "PASSED!\n\n";
+
+
+	// Test 4
+	*bmh2 -= 6;
+	std::cout << "bmh2 -= 6;\n";
+	std::cout << "EXPECTED: 1\n";
+	std::cout << "RESULT: ";
+	std::cout << bmh2->toString() << "\n";
+	assert(strcmp(bmh2->toString().c_str(), "1") == 0);
+	std::cout << "PASSED!\n\n";
+
+	// Test element count
+	std::cout << "TEST ELEMENT COUNT\n\n";
 
 	// Test 1
-	bmh1->update(1, 0);
-	std::cout << "bmh1->update(1, 0);\n";
-	std::cout << "EXPECTED: 0 5\n";
+
+	bmh2->insert(4);
+	bmh2->insert(4);
+	bmh2->insert(4);
+	std::cout << "bmh2->insert(4);\n";
+	std::cout << "bmh2->insert(4);\n";
+	std::cout << "bmh2->insert(4);\n";
+	std::cout << "EXPECTED: 1 4 4 4\n";
 	std::cout << "RESULT: ";
-	std::cout << bmh1->toString() << "\n";
-	assert(strcmp(bmh1->toString().c_str(), "0 5") == 0);
+	std::cout << bmh2->toString() << "\n";
+	assert(strcmp(bmh2->toString().c_str(), "1 4 4 4") == 0);
+	std::cout << "PASSED!\n\n";
+
+	int fourCount = (*bmh2)[4];
+	std::cout << "(*bmh2)[4];\n";
+
+	std::cout << "EXPECTED: 3\n";
+	std::cout << "RESULT: ";
+	std::cout << fourCount << "\n";
+	assert(fourCount == 3);
 	std::cout << "PASSED!\n\n";
 
 	// Test clear heap
@@ -198,6 +253,8 @@ int main() {
 	std::cout << heap::BinaryMinHeap::getObjCount() << "\n";
 	assert(heap::BinaryMinHeap::getObjCount() == 1);
 	std::cout << "PASSED!\n\n";
+
+	std::cout << "ALL TEST CASES PASSED !\n";
 
 	return 0;
 }

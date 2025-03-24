@@ -1,28 +1,18 @@
 #include "binary_min_heap.h"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 namespace heap {
-	// Declare static fields
-	int BinaryMinHeap::objCount = 0;
-
 	// Implemenation class
 	class BinaryMinHeap::Impl {
 	private:
 		std::vector<int> heapVector;
+		
+		static int objCount;
 
-		// Custom exception class
-		class HeapException : public std::exception {
-		private:
-			std::string message;
-	
-		public:
-			HeapException(const std::string& msg) : message(msg) {}
-	
-			const char* what() const noexcept override {
-				return message.c_str();
-			}
-		};
+		// Declare BinaryMinHeap as friend for sharing private methods and variables
+		friend class BinaryMinHeap;
 
 		// Helper function to maintain heap property
 		void heapify(int pos) {
@@ -47,164 +37,33 @@ namespace heap {
 				heapify(smallest);
 			}
 		}
-
-	public:
-		Impl() {}
-
-		// Copy constructor
-		Impl(const Impl& other) {
-			setHeapVector(other.getHeapVector());
-		}
-
-		// Heap vector setter
-		void setHeapVector(const std::vector<int>& heapVector) {
-			this->heapVector = heapVector;
-		}
-
-		// Heap vector getter
-		std::vector<int> getHeapVector() const {
-			return this->heapVector;
-		}
-
-		std::string toString() {
-			// Initialize stringstream object in append mode
-			std::stringstream ss("", std::ios_base::in|std::ios_base::out|std::ios_base::ate );
-
-			// Append all elements in order to string
-			for(std::vector<int>::iterator it = heapVector.begin(); it != heapVector.end(); it++){
-				ss << *it;
-
-				// If not last element add space
-				if(heapVector.end() - it != 1){
-					ss << " ";
-				}
-			}
-
-			return ss.str();
-		}
-
-		// Heap methods
-
-		// Method to insert an element to the heap
-		void insert(int value){
-			heapVector.push_back(value);
-			int pos = heapVector.size() - 1;
-
-			// While position is not root and parent element is bigger than the current element swap
-			while(pos != 0 && heapVector[(pos - 1) / 2] > heapVector[pos]) {
-				std::swap(heapVector[pos], heapVector[(pos - 1) / 2]);
-				pos = (pos - 1) / 2;
-			}
-		}
-		
-		// Method to get and remove the min element from the heap
-		int extractMin() {
-			try {
-				// Check if heap is not empty
-				if (heapVector.size() <= 0) {
-					throw HeapException("Heap empty");
-				}
 	
-				// If only one element return root
-				if (heapVector.size() == 1) {
-					int root = heapVector[0];
-					heapVector.pop_back();
-					return root;
-				}
-	
-				// Get root element
-				int root = heapVector[0];
-
-				// Place last element as root
-				heapVector[0] = heapVector.back();
-
-				// Remove last element as it is now in the front
-				heapVector.pop_back();
-
-				// Reheapify
-				heapify(0);
-
-				return root;
-			}
-			catch(HeapException e){
-				std::cout << e.what();
-			}
+		// Increase object count
+		static void incObjCount() {
+			objCount++;
 		}
 
-		// Method to get the max element from the heap
-		int getMin() const {
-			try {
-				if (heapVector.size() <= 0) {
-					throw HeapException("Heap empty");
-				}
-				return heapVector[0];
-			}
-			catch(HeapException e){
-				std::cout << e.what();
-			}
-		}
-
-		// Method to remove an element at given position from the heap
-		void remove(int pos){
-			try {
-				if (pos >= heapVector.size()) {
-					throw HeapException("Position out of bounds");
-				}
-			
-				// Place the last element instead of removed element
-				heapVector[pos] = heapVector.back();
-
-				// Remove the last element
-				heapVector.pop_back();
-
-				// Reheapify
-				heapify(pos);
-			}
-			catch(HeapException e){
-				std::cout << e.what();
-			}
-		}
-
-		// Method to update an element with a given value at a given position in the heap
-		void update(int pos, int value){
-			try {
-				if (pos >= heapVector.size()) {
-					throw HeapException("Position out of bounds");
-				}
-			
-				heapVector[pos] = value;
-				while (pos != 0 && heapVector[(pos - 1) / 2] > heapVector[pos]) {
-					std::swap(heapVector[pos], heapVector[(pos - 1) / 2]);
-					pos = (pos - 1) / 2;
-				}
-			}
-			catch(HeapException e){
-				std::cout << e.what();
-			}
-			
-		}
-
-		// Method to clear heap
-		void clear() {
-			heapVector.clear();
-		}
-		
-		// Method to check whether the heap is empty
-		bool isEmpty() {
-			return heapVector.empty();
+		// Decrease object count
+		static void decObjCount() {
+			objCount--;
 		}
 	};
+
+	// Declare static fields
+	int BinaryMinHeap::Impl::objCount = 0;
+
+	/* CONSTRUCTORS */
 
 	// Constructor
 	BinaryMinHeap::BinaryMinHeap() {
 		this->impl = new Impl();
-		incObjCount();
+		impl->incObjCount();
 	}
 
 	// Copy constructor
 	BinaryMinHeap::BinaryMinHeap(const BinaryMinHeap& other) {
 		this->impl = new Impl(*other.impl);
-		incObjCount();
+		impl->incObjCount();
 	}
 
 	// Equal operator constructor
@@ -231,74 +90,159 @@ namespace heap {
 			delete this->impl;
 			this->impl = nullptr; // To avoid double deletion
 		}
-		decObjCount();
+		impl->decObjCount();
 	}
+
+	/* OPERATORS */
 
 	// Exclamation operator to clear the heap
 	BinaryMinHeap& BinaryMinHeap::operator!() {
-		this->impl->clear();
+		clear();
 		return *this;
+	}
+
+	// Bracket operator to access elements on the heap
+	int BinaryMinHeap::operator[](int value) {
+		return std::count(impl->heapVector.begin(), impl->heapVector.end(), value);
 	}
 
 	// Plus equals operator to insert element in to the heap
 	BinaryMinHeap& BinaryMinHeap::operator+=(int value){
-		this->impl->insert(value);
+		insert(value);
 		return *this;
 	}
 
-	// Increase object count
-	void BinaryMinHeap::incObjCount() {
-		objCount++;
+	// Minus equals operator to remove element from the heap. Removes the first occurence
+	BinaryMinHeap& BinaryMinHeap::operator-=(int value){
+		remove(value);
+		return *this;
 	}
 
-	// Decrease object count
-	void BinaryMinHeap::decObjCount() {
-		objCount--;
-	}
-
-	// Get object count
-	int BinaryMinHeap::getObjCount() {
-		return objCount;
-	}
+	/* HEAP METHODS */
 
 	// Method to insert an element to the heap
 	void BinaryMinHeap::insert(int value) {
-		this->impl->insert(value);
+		impl->heapVector.push_back(value);
+		int pos = impl->heapVector.size() - 1;
+
+		// While position is not root and parent element is bigger than the current element swap
+		while(pos != 0 && impl->heapVector[(pos - 1) / 2] > impl->heapVector[pos]) {
+			std::swap(impl->heapVector[pos], impl->heapVector[(pos - 1) / 2]);
+			pos = (pos - 1) / 2;
+		}
 	}
 
 	// Method to get and remove the min element from the heap
 	int BinaryMinHeap::extractMin() {
-		return this->impl->extractMin();
+		try {
+			// Check if heap is not empty
+			if (impl->heapVector.size() <= 0) {
+				throw HeapException("Heap empty");
+			}
+
+			// If only one element return root
+			if (impl->heapVector.size() == 1) {
+				int root = impl->heapVector[0];
+				impl->heapVector.pop_back();
+				return root;
+			}
+
+			// Get root element
+			int root = impl->heapVector[0];
+
+			// Place last element as root
+			impl->heapVector[0] = impl->heapVector.back();
+
+			// Remove last element as it is now in the front
+			impl->heapVector.pop_back();
+
+			// Reheapify
+			impl->heapify(0);
+
+			return root;
+		}
+		catch(HeapException e){
+			std::cout << e.what();
+		}
 	}
 
 	// Method to get the min element from the heap
 	int BinaryMinHeap::getMin() const {
-		return this->impl->getMin();
+		try {
+			if (impl->heapVector.size() <= 0) {
+				throw HeapException("Heap empty");
+			}
+			return impl->heapVector[0];
+		}
+		catch(HeapException e){
+			std::cout << e.what();
+		}
 	}
 
-	// Method to remove an element at given position from the heap
-	void BinaryMinHeap::remove(int pos){
-		this->impl->remove(pos);
+	// Method to remove an element by value from the heap. Removes the first occurence
+	bool BinaryMinHeap::remove(int value){
+		// Find the element
+		std::vector<int>::iterator it = std::find(impl->heapVector.begin(), impl->heapVector.end(), value);
+
+		// If element not found return false
+		if(it == impl->heapVector.end()){
+			return false;
+		}
+
+		// Get indexes in the vector
+		int valuePosition = std::distance(impl->heapVector.begin(), it);
+		int endPosition = impl->heapVector.size() - 1;
+
+		// Swap selected element with last element
+		std::swap(impl->heapVector[valuePosition], impl->heapVector[endPosition]);
+
+		// Remove last element
+		impl->heapVector.pop_back();
+
+		// Reheapify
+		impl->heapify(valuePosition);
 	}
 
-	// Method to update an element with a given value at a given position in the heap
-	void BinaryMinHeap::update(int pos, int value){
-		this->impl->update(pos, value);
+
+	// Method to remove an element by value from the heap. Removes the first occurence
+	void BinaryMinHeap::removeAll(int value){
+		// Remove all elements till none left
+		while(this->remove(value));	
 	}
 
 	// Method to clear heap
 	void BinaryMinHeap::clear(){
-		this->impl->clear();
+		impl->heapVector.clear();
 	}
 
 	// Method to check if heap is empty 
 	bool BinaryMinHeap::isEmpty(){
-		this->impl->isEmpty();
+		return impl->heapVector.empty();
 	}
 
 	// Returns heap elements in string format
 	std::string BinaryMinHeap::toString(){
-		return this->impl->toString();
+		// Initialize stringstream object in append mode
+		std::stringstream ss("", std::ios_base::in|std::ios_base::out|std::ios_base::ate );
+
+		// Append all elements in order to string
+		for(std::vector<int>::iterator it = impl->heapVector.begin(); it != impl->heapVector.end(); it++){
+			ss << *it;
+
+			// If not last element add space
+			if(impl->heapVector.end() - it != 1){
+				ss << " ";
+			}
+		}
+
+		return ss.str();
+	}
+
+	/* OBJECT COUNT FUNCTION */
+
+	// Get object count
+	int BinaryMinHeap::getObjCount() {
+		return Impl::objCount;
 	}
 }
 

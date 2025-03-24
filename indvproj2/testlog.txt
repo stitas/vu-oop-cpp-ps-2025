@@ -70,15 +70,44 @@ PASSED!
 TEST REMOVE ELEMENT
 
 bmh2->remove(0);
-EXPECTED: 4 6
-RESULT: 4 6
+EXPECTED: 1 4 6
+RESULT: 1 4 6
 PASSED!
 
-TEST UPDATE ELEMENT
+bmh2->remove(4);
+EXPECTED: 1 6
+RESULT: 1 6
+PASSED!
 
-bmh1->update(1, 0);
-EXPECTED: 0 5
-RESULT: 0 5
+bmh2->insert(4);
+bmh2->insert(4);
+bmh2->insert(4);
+EXPECTED: 1 4 4 6 4
+RESULT: 1 4 4 6 4
+PASSED!
+
+bmh2->removeAll(4);
+EXPECTED: 1 6
+RESULT: 1 6
+PASSED!
+
+bmh2 -= 6;
+EXPECTED: 1
+RESULT: 1
+PASSED!
+
+TEST ELEMENT COUNT
+
+bmh2->insert(4);
+bmh2->insert(4);
+bmh2->insert(4);
+EXPECTED: 1 4 4 4
+RESULT: 1 4 4 4
+PASSED!
+
+(*bmh2)[4];
+EXPECTED: 3
+RESULT: 3
 PASSED!
 
 TEST CLEAR HEAP
@@ -105,3 +134,4 @@ EXPECTED: 1 (object count)
 RESULT: 1
 PASSED!
 
+ALL TEST CASES PASSED !
