@@ -63,7 +63,6 @@ namespace heap {
 	// Copy constructor
 	BinaryMinHeap::BinaryMinHeap(const BinaryMinHeap& other) {
 		this->impl = new Impl(*other.impl);
-		impl->incObjCount();
 	}
 
 	// Equal operator constructor
