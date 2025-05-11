@@ -5,6 +5,8 @@
 
 class Invoice {
 public:
+    ~Invoice() = default;
+
     virtual float getAmount() const = 0;
     virtual void setAmount(float amount) = 0;
     virtual std::string getCustomerName() const = 0;
@@ -12,8 +14,6 @@ public:
     virtual bool isPaid() const = 0;
     virtual void setPaid(bool paid) = 0;
     virtual std::string toString() const = 0;
-
-    ~Invoice() = default;
 };
 
 class InvoiceDecorator : public Invoice {
@@ -21,15 +21,15 @@ protected:
     Invoice* inner;
 
 public:
-    InvoiceDecorator(Invoice* invoice) : inner(invoice){}
+    InvoiceDecorator(Invoice* invoice);
 
-    float getAmount() const override { return inner->getAmount(); }
-    void setAmount(float amount) override { inner->setAmount(amount); }
-    std::string getCustomerName() const override { return inner->getCustomerName(); }
-    void setCustomerName(std::string name) override { inner->setCustomerName(name); }
-    bool isPaid() const override { return inner->isPaid(); }
-    void setPaid(bool paid) override { inner->setPaid(paid); }
-    std::string toString() const override { return inner->toString(); }
+    float getAmount() const override;
+    void setAmount(float amount) override;
+    std::string getCustomerName() const override;
+    void setCustomerName(std::string name) override;
+    bool isPaid() const override;
+    void setPaid(bool paid) override;
+    std::string toString() const override;
 };
 
 class BaseInvoice : public Invoice {
@@ -40,6 +40,7 @@ private:
 
 public:
     BaseInvoice(std::string customerName, float amount, bool paid);
+
     float getAmount() const override;
     void setAmount(float amount) override;
     std::string getCustomerName() const override;
@@ -61,14 +62,14 @@ class DiscountInvoice : public InvoiceDecorator {
 private:
     float discountPercentage;
 
-    // Set the discount percentage
-    void setDiscountPercentage(float discountPercentage);
-
 public:
     DiscountInvoice(Invoice* invoice, float discountPercentage);
     float getAmount() const override;
-
     float getDiscountPercentage() const;
+
+private:
+    // Set the discount percentage
+    void setDiscountPercentage(float discountPercentage);
 };
 
 class InvoiceException : public std::exception {
